@@ -3,9 +3,9 @@ on:
   push:
     branches: ["main"]
 
-  permissions:
-    id_token: write
-    contents: read
+permissions:
+  id_token: write
+  contents: read
 
 jobs:
   # Spring Boot 애플리케이션을 빌드하여 도커허 브에 푸시하는 과정
@@ -29,3 +29,10 @@ jobs:
         uses: gradle/gradle-build-action@v2.6.0
         with:
           arguments: build
+      - name: configure AWS Crednetials
+        uses: ans-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::872515296683:role/awscicd
+          role-session-name: sampleSessionName
+          aws-region: ap-northeast-2
+
