@@ -7,6 +7,10 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: cicd
+
 jobs:
   # Spring Boot 애플리케이션을 빌드하여 도커허 브에 푸시하는 과정
   build-docker-image:
@@ -37,3 +41,17 @@ jobs:
           role-to-assume: arn:aws:iam::872515296683:role/awscicd
           role-session-name: sampleSessionName
           aws-region: ap-northeast-2
+      # 4. ECR에 로그인
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses:
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
