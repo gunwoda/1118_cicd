@@ -8,7 +8,6 @@ permissions:
   contents: read
 
 env:
-  AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: cicd
 
 jobs:
@@ -41,12 +40,14 @@ jobs:
           role-to-assume: arn:aws:iam::872515296683:role/awscicd
           role-session-name: sampleSessionName
           aws-region: ap-northeast-2
+
       # 4. ECR에 로그인
       - name: Login to Amazon ECR
         id: login-ecr
-        uses:
+        uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
 
-      - name: Build, tag, and push image to Amazon ECR
+      # 5.이미지 빌드 및 푸시
+      - name: Build and Push Image to AWS ECR
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
